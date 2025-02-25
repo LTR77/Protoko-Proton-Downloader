@@ -12,6 +12,7 @@ ________________________________________________________________________________
 # INSTALLATION
 To Install download the Code:  
 Press Green "Code" Button then "Download ZIP"  
+Or Follow the same Steps but Download the Latest Release and Extract It.  
 
 Then either activate the venv (source venv/bin/activate) and run the python file (python3 CPDTTK.py)  
 Or manual install the dependencies by running: "pip install -r resources/requirements.txt" in the CWD
