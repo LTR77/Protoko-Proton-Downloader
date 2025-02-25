@@ -9,4 +9,13 @@ Proton TKG Valve Experimental: https://github.com/Frogging-Family/wine-tkg-git/a
   
 _________________________________________________________________________________________________________________________________________________________________________
 
+# INSTALLATION
+To Install download the Code:  
+Press Green "Code" Button then "Download ZIP"  
+
+Then either activate the venv (source venv/bin/activate) and run the python file (python3 CPDTTK.py)  
+Or manual install the dependencies by running: "pip install -r resources/requirements.txt" in the CWD
+
 # THIS IS LINUX ONLY
+
+
