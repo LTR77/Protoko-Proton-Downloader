@@ -17,14 +17,12 @@ pygame.mixer.init()
 root = Tk()
 print("log: Loading")
 sv_ttk.set_theme("dark")
-root.title("ProtonUp-TK")
+root.title("Protoko")
 root.geometry('680x400')
 
 progress = ttk.Progressbar(root, orient=HORIZONTAL, length=200, mode='determinate')
-lblProton = ttk.Label(root, text="< What version of Proton would you like to download?")
-lblProton.place(x=245, y=23)
 lbltellwarning = ttk.Label(root, text="You must Authenticate Github to use TKG Proton!")
-lbltellwarning.place(x=255, y=45)
+lbltellwarning.place(x=140, y=60)
 
 download_dir_selection = os.path.expanduser("~/.steam/steam/compatibilitytools.d/")
 default_dir = os.path.expanduser("~/.steam/steam/compatibilitytools.d")
@@ -47,7 +45,7 @@ changeDownloadLocation = None
 authGithubbtn = None
 
 ProtonOptionSelect = [
-    "GE Proton",
+    "SteamTinkerLaunch",
     "SteamTinkerLaunch",
     "GE Proton",
     "TKG Proton",
@@ -73,11 +71,25 @@ def Authenticate_Github_Background():
     thread_auth = threading.Thread(target=Authenticate_Github)
     thread_auth.start()
 
+def openDescription():
+    selected = clicked.get()
+    if selected == "GE Proton":
+        messagebox.showinfo("Description", "Compatibility tool for Steam Play based on Wine and additional components")
+    elif selected == "SteamTinkerLaunch":
+        messagebox.showinfo("Description", "Linux wrapper tool for use with the Steam client for custom launch options and 3rd party programs")
+    elif selected == "TKG Proton":
+        messagebox.showinfo("Description", "The wine-tkg build systems, to create custom Wine and Proton builds, Based on Latest Wine")
+    elif selected == "TKG Proton Experimental":
+        messagebox.showinfo("Description", "The wine-tkg build systems, to create custom Wine and Proton builds, Based on Latest Proton Experimental")
+    else:
+        messagebox.showerror("Not Found!")
+
 # stdout prints the result that would normally show in the console
 def options():
     global destroy_text_on_second_click, entry_box, lbltelldelete, lblshowdirs, delallbtn_command, deleteallbtn, openGithubbtn, changeDownloadLocation, download_dir_selection, showDownloadLocation, authGithubbtn
     pathOfFiles = default_dir
     if destroy_text_on_second_click == False:
+        btnReadDescription.place_forget()
         changeDownloadLocation = ttk.Button(root, text="Change Download Location", command=manualFolderSelection)
         changeDownloadLocation.place(x=370, y=210)
         showDownloadLocation = ttk.Label(root, text=download_dir_selection)
@@ -98,6 +110,7 @@ def options():
         lblshowdirs.place(x=20, y=100)
         destroy_text_on_second_click = True
     else:
+        btnReadDescription.place(x=530, y=250)
         authGithubbtn.destroy()
         openGithubbtn.destroy()
         entry_box.destroy()
@@ -322,6 +335,9 @@ style = ttk.Style()
 style.configure("GreenFartation.TLabel", foreground="green")
 style.configure("Green.TButton", foreground="green")
 style.configure("Red.TButton", foreground="red")
+
+btnReadDescription = ttk.Button(root, text="Read Description", command=openDescription)
+btnReadDescription.place(x=530, y=250)
 
 btnInstall = ttk.Button(root, text="Install! ✅", style="Green.TButton", command=download_proton_background)
 btnInstall.place(x=550, y=300)
