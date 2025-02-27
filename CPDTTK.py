@@ -85,13 +85,17 @@ def Authenticate_Github_Background():
 def openDescription():
     selected = clicked.get()
     if selected == "GE Proton":
-        messagebox.showinfo("Description", "Compatibility tool for Steam Play based on Wine and additional components")
+        messagebox.showinfo("Description", "A community-maintained, enhanced version of Valve's Proton, designed for better performance and compatibility in running Windows games on Linux and SteamOS.")
     elif selected == "SteamTinkerLaunch":
         messagebox.showinfo("Description", "Linux wrapper tool for use with the Steam client for custom launch options and 3rd party programs")
     elif selected == "TKG Proton":
         messagebox.showinfo("Description", "The wine-tkg build systems, to create custom Wine and Proton builds, Based on Latest Wine")
     elif selected == "TKG Proton Experimental":
         messagebox.showinfo("Description", "The wine-tkg build systems, to create custom Wine and Proton builds, Based on Latest Proton Experimental")
+    elif selected == "Proton Sarek":
+        messagebox.showinfo("Description", "Steam Play compatibility tool based on Wine and additional components, with a focus on older PCs")
+    elif selected == "CachyOS Proton":
+        messagebox.showinfo("Description", "Improved Version of Proton with additional Patches for better Game-Specific compatibility")
     else:
         messagebox.showerror("Not Found!")
 
@@ -197,6 +201,16 @@ def openGH():
     elif selected_page == "TKG Proton Experimental":
         try:
             TKG_Proton_Github = webbrowser.open("https://github.com/Frogging-Family/wine-tkg-git")
+        except:
+            print("log: Network Error!")
+    elif selected_page == "Proton Sarek":
+        try:
+            Proton_Sarek_Github = webbrowser.open("https://github.com/pythonlover02/Proton-Sarek")
+        except:
+            print("log: Network Error!")
+    elif selected_page == "CachyOS Proton":
+        try:
+            CachyOS_Proton_Github = webbrowser.open("https://github.com/CachyOS/proton-cachyos")
         except:
             print("log: Network Error!")
     else:
