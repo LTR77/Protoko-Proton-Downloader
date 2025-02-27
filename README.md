@@ -18,6 +18,10 @@ Then install the dependencies by running:
 ```console
 pip install -r resources/requirements.txt
 ```  
+then just run it by running:
+```console
+python3 CPDTTK.py
+```
   
 # THIS IS LINUX ONLY  
 !! works on my machine, YMMV !!
