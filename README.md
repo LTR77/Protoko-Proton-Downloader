@@ -1,4 +1,4 @@
-# Protoko (formely ProtonUp-TK) for Linux
+# Protoko
 This is my first GUI Application in Python using TKinter.  
 It lets you download various compatibility tools for Steam.  
 for example:  
