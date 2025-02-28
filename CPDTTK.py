@@ -41,12 +41,13 @@ destroy_text_on_second_click = False
 playing_sound = 0
 delallbtn_command = None
 openGithubbtn = None
+delete_runner_btn = None
 changeDownloadLocation = None
 authGithubbtn = None
+cbshowdirs = None
 output_list = []
 
 ProtonOptionSelect = [
-    "TKG Proton",
     "TKG Proton",
     "TKG Proton Experimental",
     "GE Proton",
@@ -57,15 +58,12 @@ ProtonOptionSelect = [
 
 def update_version_menu(*args):
     new_versions = list_versions()
-    change_version.set(new_versions[0])
-    menu = dropChangeVer["menu"]
-    menu.delete(0, "end")
-    for version in new_versions:
-        menu.add_command(label=version, command=lambda v=version: change_version.set(v))
+    dropChangeVer["values"] = new_versions
+    change_name = change_version.set(new_versions[0])
 
 clicked = StringVar()
-clicked.set("Select Here!")
-dropProtonSelect = ttk.OptionMenu(root , clicked , *ProtonOptionSelect)
+clicked.set("Select Here 🔨")
+dropProtonSelect = ttk.Combobox(root, textvariable=clicked, values=ProtonOptionSelect, state="readonly")
 dropProtonSelect.place(x=130, y=20)
 clicked.trace("w", update_version_menu)
 
@@ -95,58 +93,70 @@ def openDescription():
     elif selected == "Proton Sarek":
         messagebox.showinfo("Description", "Steam Play compatibility tool based on Wine and additional components, with a focus on older PCs")
     elif selected == "CachyOS Proton":
-        messagebox.showinfo("Description", "Improved Version of Proton with additional Patches for better Game-Specific compatibility")
+        messagebox.showinfo("Description", "Improved Version of Proton with additional Patches for better Game-Specific compatibility, Made for CachyOS")
     else:
         messagebox.showerror("Not Found!")
 
-# stdout prints the result that would normally show in the console
+def remove_files_optionsmenu():
+   command = subprocess.run(f"ls {default_dir}", shell=True, text=True, capture_output=True, check=True)
+   init_result = command.stdout.strip()
+   list_result = init_result.split("\n")
+   return(list_result)
+
 def options():
-    global destroy_text_on_second_click, entry_box, lbltelldelete, lblshowdirs, delallbtn_command, deleteallbtn, openGithubbtn, changeDownloadLocation, download_dir_selection, showDownloadLocation, authGithubbtn
+    global destroy_text_on_second_click, entry_box, lbltelldelete, lblshowdirs, delallbtn_command, deleteallbtn, openGithubbtn, changeDownloadLocation, download_dir_selection, showDownloadLocation, authGithubbtn, cbshowdirs, delete_runner_btn, list_deletable_files
     pathOfFiles = default_dir
     if destroy_text_on_second_click == False:
         btnReadDescription.place_forget()
         changeDownloadLocation = ttk.Button(root, text="Change Download Location", command=manualFolderSelection)
-        changeDownloadLocation.place(x=370, y=210)
+        changeDownloadLocation.place(x=280, y=210)
         showDownloadLocation = ttk.Label(root, text=download_dir_selection)
-        showDownloadLocation.place(x=320, y=250)
+        showDownloadLocation.place(x=280, y=250)
         openGithubbtn = ttk.Button(root, text="Github 💻", command=openGH)
-        openGithubbtn.place(x=370, y=170)
+        openGithubbtn.place(x=280, y=170)
         authGithubbtn = ttk.Button(root, text="Auth Github", command=Authenticate_Github_Background)
-        authGithubbtn.place(x=500, y=170)
+        authGithubbtn.place(x=390, y=130)
         deleteallbtn = ttk.Button(root, text="Delete all ❌", command=encapsulate_the_dangerous_variable)
-        deleteallbtn.place(x=370, y=130)
-        entry_box = ttk.Entry(root, width=15)
-        entry_box.bind("<Return>", check_text)
-        entry_box.place(x=210, y=90)
-        lbltelldelete = Label(root, text = "< Type what you want to delete here")
-        lbltelldelete.place(x=370, y=100)
-        result = subprocess.run("ls ~/.steam/steam/compatibilitytools.d", shell=True, text=True, capture_output=True)
-        lblshowdirs = Label(root, text=result.stdout, wraplength=180, justify="left")
-        lblshowdirs.place(x=20, y=100)
+        deleteallbtn.place(x=280, y=130)
+        lbltelldelete = Label(root, text = "< Select what you want to delete here")
+        lbltelldelete.place(x=280, y=100)
+        init_rm_files_optionmenu_func = remove_files_optionsmenu()
+        list_deletable_files = StringVar()
+        list_deletable_files.set("                           💀")
+        cbshowdirs = ttk.Combobox(root, textvariable=list_deletable_files, values=init_rm_files_optionmenu_func, state="readonly")
+        cbshowdirs.place(x=20, y=100)
+        delete_runner_btn = ttk.Button(root, text="Delete Runner 💀", command=check_text)
+        delete_runner_btn.place(x=20, y=150)
         destroy_text_on_second_click = True
     else:
         btnReadDescription.place(x=530, y=250)
         authGithubbtn.destroy()
+        delete_runner_btn.destroy()
         openGithubbtn.destroy()
-        entry_box.destroy()
         lbltelldelete.destroy()
-        lblshowdirs.destroy()
+        cbshowdirs.destroy()
         deleteallbtn.destroy()
         changeDownloadLocation.destroy()
         showDownloadLocation.destroy()
         print("log: removed (second click detected)")
         destroy_text_on_second_click = False
 
-def check_text(event):
-    global entry_box
+def remove_files_quickupdate():
+    cbshowdirs['values'] = ()
+    list_deletable_files.set("")
+    fast_refresh = remove_files_optionsmenu
+    cbshowdirs["values"] = fast_refresh
+
+def check_text():
     pathOfFiles = default_dir
-    user_input = entry_box.get().strip()
+    selection = cbshowdirs.get()
     try:
         files_in_dir = os.listdir(pathOfFiles)
-        if user_input in files_in_dir:
-            full_path = os.path.join(pathOfFiles, user_input)
+        if selection in files_in_dir:
+            full_path = os.path.join(pathOfFiles, selection)
             subprocess.run(f"rm -rf {full_path}", check=True, shell=True)
             lbltelldelete.config(text="Deleted!")
+            remove_files_quickupdate()
         else:
             lbltelldelete.config(text="File Not Found! You have probably made a typo!")
     except FileNotFoundError:
@@ -220,38 +230,48 @@ def manualFolderSelection():
     global download_dir_selection, default_dir
     default_dir_for_selection = default_dir
     download_dir_selection = filedialog.askdirectory(initialdir=default_dir_for_selection, title="Select Download Folder")
+    showDownloadLocation.config(text="")
+    time.sleep(0.1)
+    showDownloadLocation.config(text=download_dir_selection)
 
 def list_versions():
     selected = clicked.get()
     if selected == "GE Proton":
-        list_version_command = subprocess.run("gh release list --repo GloriousEggroll/proton-ge-custom --limit 35 --json tagName --jq '.[].tagName'", shell=True, text=True, check=True, capture_output=True)
+        list_version_command = subprocess.run("gh release list --repo GloriousEggroll/proton-ge-custom --limit 70 --json tagName --jq '.[].tagName'", shell=True, text=True, check=True, capture_output=True)
         output = list_version_command.stdout.strip()
         output_list = output.split("\n")
         output_list.insert(0, "GE-Proton9-25")
         return(output_list)
     elif selected == "CachyOS Proton":
-        list_version_command = subprocess.run("gh release list --repo CachyOS/proton-cachyos --limit 35 --json tagName --jq '.[].tagName'", shell=True, text=True, check=True, capture_output=True)
+        list_version_command = subprocess.run("gh release list --repo CachyOS/proton-cachyos --limit 70 --json tagName --jq '.[].tagName'", shell=True, text=True, check=True, capture_output=True)
         output = list_version_command.stdout.strip()
         output_list = output.split("\n")
         return(output_list)
     elif selected == "Proton Sarek":
-        list_version_command = subprocess.run("gh release list --repo pythonlover02/Proton-Sarek --limit 35 --json tagName --jq '.[].tagName'", shell=True, text=True, check=True, capture_output=True)
+        list_version_command = subprocess.run("gh release list --repo pythonlover02/Proton-Sarek --limit 70 --json tagName --jq '.[].tagName'", shell=True, text=True, check=True, capture_output=True)
         output = list_version_command.stdout.strip()
         output_list = output.split("\n")
         return(output_list)
     elif selected == "TKG Proton":
-        list_temp = ["Not Implemented!"]
-        return(list_temp)
+        list_version_command = subprocess.run("gh run list  --status success --limit 70 -R Frogging-Family/wine-tkg-git -w proton-arch-nopackage.yml --json databaseId -q '.[].databaseId'", shell=True, capture_output=True, check=True, text=True)
+        output = list_version_command.stdout.strip()
+        output_list = output.split("\n")
+        return(output_list)
     elif selected == "TKG Proton Experimental":
-        list_temp = ["Not Implemented!"]
+        list_version_command = subprocess.run("gh run list  --status success --limit 70 -R Frogging-Family/wine-tkg-git -w proton-valvexbe-arch-nopackage.yml --json databaseId -q '.[].databaseId'", shell=True, capture_output=True, check=True, text=True)
+        output = list_version_command.stdout.strip()
+        output_list = output.split("\n")
+        return(output_list)
+    elif selected == "SteamTinkerLaunch":
+        list_temp = ["STL Dosen't support Version Switching!"]
         return(list_temp)
     else:
-        print("log: unexpected error!")
+        print("log: unexpected error! (ignore this!)")
 
 init_list_ver_func = list_versions()
 change_version = StringVar()
 change_version.set("Change Version 👀")
-dropChangeVer = ttk.OptionMenu(root , change_version , *init_list_ver_func)
+dropChangeVer = ttk.Combobox(root, textvariable=change_version, values=init_list_ver_func, state="readonly")
 dropChangeVer.place(x=350, y=20)
 
 def download_proton():
@@ -262,22 +282,15 @@ def download_proton():
         try:
             #progress.place(x=200, y=370)
             print("log: selected GE Proton, continuuing")
-            #progress["value"] = 10
-            #progress["value"] = 20
             download_dir = download_dir_selection
             download_path = os.path.join(download_dir, "GE-Proton.tar.gz")
-            #progress["value"] = 30
             print("log: Downloading...")
-            #progress["value"] = 40
-            subprocess.run(f"wget -q https://github.com/GloriousEggroll/proton-ge-custom/releases/download/{selected_version_proton}/{selected_version_proton}.tar.gz -P {download_dir} -O GE-Proton.tar.gz", shell=True, check=True)
-            #progress["value"] = 60
+            subprocess.run(f"wget -q https://github.com/GloriousEggroll/proton-ge-custom/releases/download/{selected_version_proton}/{selected_version_proton}.tar.gz -O {download_path}", shell=True, check=True)
             print("log: Extracting...")
-            tar = tarfile.open("GE-Proton.tar.gz", "r:gz")
+            tar = tarfile.open(f"{download_path}", "r:gz")
             tar.extractall(path=download_dir)
             tar.close()
-            #progress["value"] = 80
             subprocess.run(f"rm {download_path}", shell=True)
-            #progress["value"] = 100
             time.sleep(2)
             SuccessLabel = ttk.Label(root, text="Installed Successfully!", style="GreenFartation.TLabel")
             SuccessLabel.place(x=530, y=370)
@@ -332,21 +345,17 @@ def download_proton():
         try:
             print("log: selected STL, continuuing")
             #progress.place(x=200, y=370)
-            #progress["value"] = 30
             download_dir = download_dir_selection
             download_path = os.path.join(download_dir, "master.zip")
             print("log: Downloading...")
             subprocess.run(f"wget -P {download_dir} https://github.com/sonic2kk/steamtinkerlaunch/archive/refs/heads/master.zip", shell=True, check=True)
-            #progress["value"] = 60
             if download_dir == default_dir:
                 print("log: Extracting...")
                 zip = zipfile.ZipFile(download_path, "r")
                 zip.extractall(path=download_dir)
                 zip.close()
-                #progress["value"] = 80
                 subprocess.run(f"chmod +x {download_dir}steamtinkerlaunch-master/steamtinkerlaunch && {download_dir}steamtinkerlaunch-master/steamtinkerlaunch compat add", shell=True)
                 subprocess.run(f"rm {download_path} && rm -rf {download_dir}/steamtinkerlaunch-master", shell=True)
-            #progress["value"] = 100
             time.sleep(2)
             SuccessLabel = ttk.Label(root, text="Installed Successfully!", style="GreenFartation.TLabel")
             SuccessLabel.place(x=530, y=370)
@@ -367,21 +376,15 @@ def download_proton():
             print("log: selected TKG Proton, continuuing")
             #progress = ttk.Progressbar(root, orient="horizontal", length=200, mode="determinate")
             #progress.place(x=200, y=370)
-            #progress["value"] = 20
             print("log: running download script!")
-            #progress["value"] = 40
-            subprocess.run(f"gh run list -R Frogging-Family/wine-tkg-git -w proton-arch-nopackage.yml -s success -L 1 --json databaseId | jq -r '.[0].databaseId' | xargs -I {{}} gh run download {{}} -R Frogging-Family/wine-tkg-git -D {download_dir_selection}", shell=True)
-            #progress["value"] = 60
+            subprocess.run(f"gh run download -R Frogging-Family/wine-tkg-git {selected_version_proton} -D {download_dir_selection}", shell=True)
             download_dir = download_dir_selection
             download_path = os.path.join(download_dir, "proton-tkg-build")
-            #progress["value"] = 70
             print("log: Extracting with Subprocess (if it fails make sure you have tar installed!)")
             subprocess.run(f"tar -xf {download_dir}proton-tkg-build/*.tar -C {download_dir}", shell=True)
-            #progress["value"] = 80
             SuccessLabel = ttk.Label(root, text="Installed Successfully!", style="GreenFartation.TLabel")
             SuccessLabel.place(x=530, y=370)
             subprocess.run(f"rm -rf {download_path}", shell=True)
-            #progress["value"] = 100
             time.sleep(2)
             print("log: Completed!")
             #progress.place_forget()
@@ -394,21 +397,15 @@ def download_proton():
         try:
             print("log: selected TKG Proton Experimental, continuuing")
             #progress.place(x=200, y=370)
-            #progress["value"] = 20
             print("log: running download script!")
-            #progress["value"] = 40
-            subprocess.run(f"gh run list -R Frogging-Family/wine-tkg-git -w proton-valvexbe-arch-nopackage.yml -s success -L 1 --json databaseId | jq -r '.[0].databaseId' | xargs -I {{}} gh run download {{}} -R Frogging-Family/wine-tkg-git -D {download_dir_selection}", shell=True)
-            #progress["value"] = 60
+            subprocess.run(f"gh run download -R Frogging-Family/wine-tkg-git {selected_version_proton} -D {download_dir_selection}", shell=True)
             download_dir = download_dir_selection
-            #progress["value"] = 70
             download_path = os.path.join(download_dir, "proton-tkg-build")
             print("log: Extracting with Subprocess (if it fails make sure you have tar installed!)")
             subprocess.run(f"tar -xf {download_dir}proton-tkg-build/*.tar -C {download_dir}", shell=True)
-            #progress["value"] = 80
             SuccessLabel = ttk.Label(root, text="Installed Successfully!", style="GreenFartation.TLabel")
             SuccessLabel.place(x=530, y=370)
             subprocess.run(f"rm -rf {download_path}", shell=True)
-            #progress["value"] = 100
             time.sleep(2)
             print("log: Completed!")
             #progress.place_forget()
