@@ -240,7 +240,7 @@ def list_versions():
         list_version_command = subprocess.run("gh release list --repo GloriousEggroll/proton-ge-custom --limit 70 --json tagName --jq '.[].tagName'", shell=True, text=True, check=True, capture_output=True)
         output = list_version_command.stdout.strip()
         output_list = output.split("\n")
-        output_list.insert(0, "GE-Proton9-25")
+        #output_list.insert(0, "GE-Proton9-25")
         return(output_list)
     elif selected == "CachyOS Proton":
         list_version_command = subprocess.run("gh release list --repo CachyOS/proton-cachyos --limit 70 --json tagName --jq '.[].tagName'", shell=True, text=True, check=True, capture_output=True)
@@ -280,7 +280,6 @@ def download_proton():
     selected_version_proton = change_version.get()
     if selected == "GE Proton":
         try:
-            #progress.place(x=200, y=370)
             print("log: selected GE Proton, continuuing")
             download_dir = download_dir_selection
             download_path = os.path.join(download_dir, "GE-Proton.tar.gz")
@@ -295,17 +294,13 @@ def download_proton():
             SuccessLabel = ttk.Label(root, text="Installed Successfully!", style="GreenFartation.TLabel")
             SuccessLabel.place(x=530, y=370)
             print("log: Completed!")
-            #progress.destroy()
         except subprocess.CalledProcessError:
-            #progress["value"] = 0
             messagebox.showerror("Error!", "Check Internet Connection or Curl/WGet Installation!")
             time.sleep(2)
-            #progress.destroy()
         except tarfile.TarError:
             progress["value"] = 0
             messagebox.showerror("Error!", "Bad Tar File!")
             time.sleep(2)
-            #progress.place_forget()
     if selected == "Proton Sarek":
         try:
             print("log: selected Proton Sarek, continuuing")
@@ -344,7 +339,6 @@ def download_proton():
     if selected == "SteamTinkerLaunch":
         try:
             print("log: selected STL, continuuing")
-            #progress.place(x=200, y=370)
             download_dir = download_dir_selection
             download_path = os.path.join(download_dir, "master.zip")
             print("log: Downloading...")
@@ -360,22 +354,15 @@ def download_proton():
             SuccessLabel = ttk.Label(root, text="Installed Successfully!", style="GreenFartation.TLabel")
             SuccessLabel.place(x=530, y=370)
             print("log: Completed!")
-            #progress.place_forget()
         except subprocess.CalledProcessError:
-            #progress["value"] = 0
             messagebox.showerror("Error!", "Check Internet Connection or Curl/WGet Installation!")
             time.sleep(2)
-            #progress.place_forget()
         except zipfile.BadZipFile:
-            #progress["value"] = 0
             messagebox.showerror("Error!", "Bad Zip File!")
             time.sleep(2)
-            #progress.place_forget()
     if selected == "TKG Proton":
         try:
             print("log: selected TKG Proton, continuuing")
-            #progress = ttk.Progressbar(root, orient="horizontal", length=200, mode="determinate")
-            #progress.place(x=200, y=370)
             print("log: running download script!")
             subprocess.run(f"gh run download -R Frogging-Family/wine-tkg-git {selected_version_proton} -D {download_dir_selection}", shell=True)
             download_dir = download_dir_selection
@@ -387,12 +374,9 @@ def download_proton():
             subprocess.run(f"rm -rf {download_path}", shell=True)
             time.sleep(2)
             print("log: Completed!")
-            #progress.place_forget()
         except subprocess.CalledProcessError:
-            #progress["value"] = 0
             messagebox.showerror("Error!", "Check Internet Connection or Curl/WGet/Tar/GH Installation!")
             time.sleep(2)
-            #progress.place_forget()
     if selected == "TKG Proton Experimental":
         try:
             print("log: selected TKG Proton Experimental, continuuing")
