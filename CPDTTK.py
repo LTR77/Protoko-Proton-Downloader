@@ -313,7 +313,7 @@ def download_proton():
             SuccessLabel = ttk.Label(root, text="Installed Successfully!", style="GreenFartation.TLabel")
             SuccessLabel.place(x=530, y=370)
             print("log: Completed!")
-            remove_files_quickupdate()
+            remove_files_quickupdate
             time.sleep(4)
             SuccessLabel.destroy()
         except subprocess.CalledProcessError:
@@ -339,7 +339,7 @@ def download_proton():
             SuccessLabel = ttk.Label(root, text="Installed Successfully!", style="GreenFartation.TLabel")
             SuccessLabel.place(x=530, y=370)
             print("log: Completed!")
-            remove_files_quickupdate()
+            remove_files_quickupdate
             time.sleep(4)
             SuccessLabel.destroy()
         except subprocess.CalledProcessError:
@@ -360,7 +360,7 @@ def download_proton():
             SuccessLabel = ttk.Label(root, text="Installed Successfully!", style="GreenFartation.TLabel")
             SuccessLabel.place(x=530, y=370)
             print("log: Completed!")
-            remove_files_quickupdate()
+            remove_files_quickupdate
             time.sleep(4)
             SuccessLabel.destroy()
         except subprocess.CalledProcessError:
@@ -384,7 +384,7 @@ def download_proton():
             SuccessLabel = ttk.Label(root, text="Installed Successfully!", style="GreenFartation.TLabel")
             SuccessLabel.place(x=530, y=370)
             print("log: Completed!")
-            remove_files_quickupdate()
+            remove_files_quickupdate
             time.sleep(4)
             SuccessLabel.destroy()
         except subprocess.CalledProcessError:
@@ -409,7 +409,7 @@ def download_proton():
             subprocess.run(f"rm -rf {download_path}", shell=True)
             time.sleep(2)
             print("log: Completed!")
-            remove_files_quickupdate()
+            remove_files_quickupdate
             time.sleep(4)
             SuccessLabel.destroy()
         except subprocess.CalledProcessError:
@@ -432,7 +432,7 @@ def download_proton():
             subprocess.run(f"rm -rf {download_path}", shell=True)
             time.sleep(2)
             print("log: Completed!")
-            remove_files_quickupdate()
+            remove_files_quickupdate
             time.sleep(4)
             SuccessLabel.destroy()
         except subprocess.CalledProcessError:
