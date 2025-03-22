@@ -10,6 +10,7 @@ import threading
 import sv_ttk
 import tarfile
 import zipfile
+import glob
 import subprocess
 import os
 
@@ -400,13 +401,14 @@ def download_proton():
             subprocess.run(f"gh run download -R Frogging-Family/wine-tkg-git {selected_version_proton} -D {download_dir_selection}", shell=True)
             download_dir = download_dir_selection
             download_path = os.path.join(download_dir, "proton-tkg-build/*.tar")
+            files = glob.glob(download_path)
             print("log: Extracting...")
-            tar = tarfile.open(f"{download_path}", "r")
+            tar = tarfile.open(files[0], "r")
             tar.extractall(path=download_dir)
             tar.close()
             SuccessLabel = ttk.Label(root, text="Installed Successfully!", style="GreenFartation.TLabel")
             SuccessLabel.place(x=530, y=370)
-            subprocess.run(f"rm -rf {download_path}", shell=True)
+            subprocess.run(f"rm -rf {download_dir}/proton-tkg-build", shell=True)
             time.sleep(2)
             print("log: Completed!")
             remove_files_quickupdate
@@ -423,13 +425,14 @@ def download_proton():
             subprocess.run(f"gh run download -R Frogging-Family/wine-tkg-git {selected_version_proton} -D {download_dir_selection}", shell=True)
             download_dir = download_dir_selection
             download_path = os.path.join(download_dir, "proton-tkg-build/*.tar")
+            files = glob.glob(download_path)
             print("log: Extracting...")
-            tar = tarfile.open(f"{download_path}", "r")
+            tar = tarfile.open(files[0], "r")
             tar.extractall(path=download_dir)
             tar.close()
             SuccessLabel = ttk.Label(root, text="Installed Successfully!", style="GreenFartation.TLabel")
             SuccessLabel.place(x=530, y=370)
-            subprocess.run(f"rm -rf {download_path}", shell=True)
+            subprocess.run(f"rm -rf f"{download_dir}/proton-tkg-build", shell=True)
             time.sleep(2)
             print("log: Completed!")
             remove_files_quickupdate
