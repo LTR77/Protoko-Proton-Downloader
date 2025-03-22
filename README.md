@@ -10,8 +10,10 @@ SteamTinkerLaunch: https://github.com/sonic2kk/steamtinkerlaunch
 Proton TKG: https://github.com/Frogging-Family/wine-tkg-git/actions/workflows/proton-arch-nopackage.yml (requires authentication via GitHub)  
 
 Proton TKG Valve Experimental: https://github.com/Frogging-Family/wine-tkg-git/actions/workflows/proton-valvexbe-arch-nopackage.yml (requires authentication via GitHub)
-  
-_________________________________________________________________________________________________________________________________________________________________________
+
+## And many more !
+
+________________________________________________________________________________________________________________________________________________________________________
 
 # INSTALLATION
 To Install download the Code:  
