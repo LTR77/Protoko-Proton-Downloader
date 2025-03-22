@@ -22,7 +22,11 @@ then just run it by running:
 ```console
 python3 CPDTTK.py
 ```
-  
+## OR
+Run the start.sh script like this:
+```console
+./start.sh
+```
 # THIS IS LINUX ONLY  
 !! works on my machine, YMMV !!
 
