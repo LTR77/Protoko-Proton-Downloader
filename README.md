@@ -1,3 +1,4 @@
+update and fix soon!
 # Protoko Proton Downloader
 This is my first GUI Application in Python using TKinter.  
 It lets you download various compatibility tools for Steam.  
