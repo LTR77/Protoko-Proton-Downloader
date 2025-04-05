@@ -34,7 +34,7 @@ Run the appimage* like this:
 ./Protoko-x86_64.AppImage
 ```
  or install AppImage Launcher and run it with that  
- *AppImage contains many bugs as of right now (05 04 2025) and therefor is not recommended to be used
+ *AppImage contains many bugs as of right now (05 04 2025) and therefore is not recommended to be used
 # THIS IS LINUX ONLY  
 !! works on my machine, YMMV !!
 
