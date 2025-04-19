@@ -1,5 +1,5 @@
 # Protoko Proton Downloader
-This is my first GUI Application in Python using TKinter (Soon PyQt6 (: ).  
+This is my first GUI Application in Python using TKinter (Soon [PYQT6](https://github.com/LTR77/Protoko-Proton-Downloader/tree/qt-beta) (: ).  
 
 ![2025-04-12-074100_hyprshot](https://github.com/user-attachments/assets/eb352f5c-6a4b-42e6-bb45-ff7cce5a2ea0)
 
