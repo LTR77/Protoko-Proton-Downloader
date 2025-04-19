@@ -1,0 +1,3 @@
+qt-material
+pyqtdarktheme
+PyQt6-Fluent-Widgets
