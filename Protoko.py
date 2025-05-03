@@ -5,6 +5,7 @@ from PyQt6.QtCore import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from qt_material import apply_stylesheet
+from pynput import keyboard
 from pygame import mixer
 
 mixer.init()
@@ -27,7 +28,7 @@ class MainWindow(QMainWindow):
         "Proton Sarek"
         ]
         
-        self.download_dir_selection = os.path.expanduser("~/.steam/steam/compatibilitytools.d/")
+        self.download_dir_selection = os.path.expanduser("~/.steam/steam/compatibilitytools.d")
         self.default_dir = os.path.expanduser("~/.steam/steam/compatibilitytools.d")
         self.default_steam_path = os.path.expanduser("~/.steam/steam")
         self.flatpak_steam_path = os.path.expanduser("~/.var/app/com.valvesoftware.Steam/.local/share/Steam")
@@ -92,8 +93,7 @@ class MainWindow(QMainWindow):
         Quit.clicked.connect(self.QuitFunc)
         Sound.clicked.connect(self.PlaySoundBG)
         Options.clicked.connect(self.OptionsMenu)
-        Install.clicked.connect(self.download_proton)
-        self.Version_Selection.currentTextChanged.connect(self.Selected_Proton_Version_save)
+        Install.clicked.connect(self.download_proton_background)
         self.Version_Selection.currentTextChanged.connect(self.Selected_Proton_Version_save)
 
         Quit.setMaximumWidth(100)
@@ -240,16 +240,34 @@ class MainWindow(QMainWindow):
             self.OpenGH = QPushButton(text="Github 💻")
             self.OpenGH.setParent(self.centerWidget)
             self.OpenGH.setGeometry(260, 170, 130, 35)
+
+            # List Deletable Files CBox
+            DeletableFilesCommand = self.remove_files_optionsmenu()
+            self.listDeletableFiles = QComboBox()
+            self.listDeletableFiles.addItems(DeletableFilesCommand)
+            self.listDeletableFiles.setStyleSheet("color: cyan;")
+            # self.listDeletableFiles.currentTextChanged.connect()
+            self.listDeletableFiles.setParent(self.centerWidget)
+            self.listDeletableFiles.setGeometry(20, 100, 245, 30)
+            self.listDeletableFiles.show()
             
             self.destroy_options_on_second_click = True
         else:
             self.manual_folder_selection.hide()
             self.AuthGH.hide()
+            self.listDeletableFiles.hide()
             self.destroy_options_on_second_click = False
             print("log: hidden options menu")
+    
+    def remove_files_optionsmenu(self):
+        command = subprocess.run(f"ls {self.default_dir}", shell=True, text=True, capture_output=True, check=True)
+        init_result = command.stdout.strip()
+        list_result = init_result.split("\n")
+        return(list_result)
             
     def AuthGHFunc(self):
         if self.AuthDestroySecondClick == False:
+            print("log: setting up required widgets for this operation")
             self.PATInput = QComboBox()
             self.PATInput.setEditable(True)
             self.PATInput.setParent(self.centerWidget)
@@ -258,7 +276,6 @@ class MainWindow(QMainWindow):
             self.wdidn = QLabel(text="Enter your Personal Access Token (PAT)")
             self.wdidn.setParent(self.centerWidget)
             self.wdidn.setGeometry(390, 210, 300, 50)
-            self.wdidn.show()
             self.AuthDestroySecondClick = True
         else:
             self.wdidn.hide()
@@ -295,12 +312,6 @@ class MainWindow(QMainWindow):
         self.wdidn.hide()
         self.PATInput.hide()
         
-    def KeyCheckToken(self, e):
-        if e.key() == Qt.Key.Key_Enter or e.key() == Qt.Key.Key_Return:
-            self.PATInput.currentText(self.CheckBox())
-            return True
-        return False
-
     def Folder_Selection_Func(self):
         self.download_dir_selection = QFileDialog.getExistingDirectory(self, "Select Download Dir", self.default_dir)
         print(f"log: dir = {self.download_dir_selection}")
@@ -370,6 +381,8 @@ class MainWindow(QMainWindow):
                 tar = tarfile.open(f"{download_path}", "r")
                 tar.extractall(path=download_dir)
                 tar.close()
+                print("log: Cleaning up!")
+                subprocess.run(f"rm {download_path}", shell=True)
                 time.sleep(2)
                 print("log: Completed!")
                 time.sleep(4)
@@ -439,7 +452,11 @@ class MainWindow(QMainWindow):
             except subprocess.CalledProcessError:
                 print("log: Error!", "Check Internet Connection or Curl/WGet/Tar Installation!")
                 time.sleep(2)
-        
+            
+    def download_proton_background(self):
+        download_thread = threading.Thread(target=self.download_proton)
+        download_thread.start()
+            
     def PlaySound(self):
         if self.playing_sound == 0:
             mixer.unpause()
