@@ -28,8 +28,8 @@ class MainWindow(QMainWindow):
         "Proton Sarek"
         ]
         
-        self.download_dir_selection = os.path.expanduser("~/.steam/steam/compatibilitytools.d")
-        self.default_dir = os.path.expanduser("~/.steam/steam/compatibilitytools.d")
+        self.download_dir_selection = os.path.expanduser("~/.steam/steam/compatibilitytools.d/")
+        self.default_dir = os.path.expanduser("~/.steam/steam/compatibilitytools.d/")
         self.default_steam_path = os.path.expanduser("~/.steam/steam")
         self.flatpak_steam_path = os.path.expanduser("~/.var/app/com.valvesoftware.Steam/.local/share/Steam")
         self.snap_steam_path = os.path.expanduser("~/snap/steam/common/.local/share/Steam")
@@ -57,13 +57,13 @@ class MainWindow(QMainWindow):
 
         print("log: checking for steam installation path")
         if os.path.exists(self.default_steam_path):
-            default_dir = os.path.expanduser("~/.steam/steam/compatibilitytools.d/")
+            self.default_dir = os.path.expanduser("~/.steam/steam/compatibilitytools.d/")
             print("log: found native steam installation!")
         elif os.path.exists(self.flatpak_steam_path):
-            default_dir = os.path.expanduser("~/.var/app/com.valvesoftware.Steam/.local/share/Steam/compatibilitytools.d")
+            self.default_dir = os.path.expanduser("~/.var/app/com.valvesoftware.Steam/.local/share/Steam/compatibilitytools.d/")
             print("log: native steam path not found, selecting default flatpak path!")
         elif os.path.exists(self.snap_steam_path):
-            default_dir = os.path.expanduser("~/snap/steam/common/.local/share/Steam")
+            self.default_dir = os.path.expanduser("~/snap/steam/common/.local/share/Steam/compatibilitytools.d/")
             print("log: native or flatpak steam path not found, selecting default snap path!")
 
         self.playing_sound = 0
@@ -209,6 +209,7 @@ class MainWindow(QMainWindow):
                 print(f"log: Failed to Load version list! make sure you have run {"gh auth login"} before trying this")
                 list_temp = ["Auth Github First!"]
                 return(list_temp)
+
         elif self.selected == "SteamTinkerLaunch":
             list_temp = ["STL Dosen't support Version Switching!"]
             return(list_temp)
@@ -242,19 +243,26 @@ class MainWindow(QMainWindow):
             self.OpenGH.setGeometry(260, 170, 130, 35)
 
             # List Deletable Files CBox
-            DeletableFilesCommand = self.remove_files_optionsmenu()
+            self.DeletableFilesCommand = self.remove_files_optionsmenu()
             self.listDeletableFiles = QComboBox()
-            self.listDeletableFiles.addItems(DeletableFilesCommand)
+            self.listDeletableFiles.addItems(self.DeletableFilesCommand)
             self.listDeletableFiles.setStyleSheet("color: cyan;")
-            # self.listDeletableFiles.currentTextChanged.connect()
             self.listDeletableFiles.setParent(self.centerWidget)
             self.listDeletableFiles.setGeometry(20, 100, 245, 30)
             self.listDeletableFiles.show()
+
+            # delete selected version
+            self.delSelectedVer = QPushButton(text="Delete Runner 💀")
+            self.delSelectedVer.pressed.connect(self.DeleteVersion)
+            self.delSelectedVer.setParent(self.centerWidget)
+            self.delSelectedVer.setGeometry(20, 180, 150, 35)
+            self.delSelectedVer.show()
             
             self.destroy_options_on_second_click = True
         else:
             self.manual_folder_selection.hide()
             self.AuthGH.hide()
+            self.delSelectedVer.hide()
             self.listDeletableFiles.hide()
             self.destroy_options_on_second_click = False
             print("log: hidden options menu")
@@ -263,6 +271,7 @@ class MainWindow(QMainWindow):
         command = subprocess.run(f"ls {self.default_dir}", shell=True, text=True, capture_output=True, check=True)
         init_result = command.stdout.strip()
         list_result = init_result.split("\n")
+        list_result.insert(0, "                           💀")
         return(list_result)
             
     def AuthGHFunc(self):
@@ -273,6 +282,7 @@ class MainWindow(QMainWindow):
             self.PATInput.setParent(self.centerWidget)
             self.PATInput.setGeometry(390, 190, 200, 35)
             self.PATInput.show()
+            self.PATInput.currentTextChanged.connect(self.CheckBox)
             self.wdidn = QLabel(text="Enter your Personal Access Token (PAT)")
             self.wdidn.setParent(self.centerWidget)
             self.wdidn.setGeometry(390, 210, 300, 50)
@@ -315,8 +325,20 @@ class MainWindow(QMainWindow):
     def Folder_Selection_Func(self):
         self.download_dir_selection = QFileDialog.getExistingDirectory(self, "Select Download Dir", self.default_dir)
         print(f"log: dir = {self.download_dir_selection}")
-            
-            
+        
+    def DeleteVersion(self):
+        selected = self.listDeletableFiles.currentText()
+        path = os.path.join(self.download_dir_selection, selected)
+        print("log: Deleting")
+        subprocess.run(f"rm -rf {path}", shell=True, check=True)
+        print("log: Deleted!")
+        print("log: refilling menu...")           
+        self.listDeletableFiles.clear()
+        self.DeletableFilesCommand = self.remove_files_optionsmenu()
+        self.listDeletableFiles.addItems(self.DeletableFilesCommand)
+        print("Done!")
+        
+
     # OPTIONS END
     
     
@@ -393,18 +415,19 @@ class MainWindow(QMainWindow):
             try:
                 print("log: selected STL, continuuing")
                 download_dir = self.download_dir_selection
-                download_path = os.path.join(download_dir, "master.zip")
+                download_path_zip_file = os.path.join(download_dir, "master.zip")
+                download_path = os.path.join(download_dir, "steamtinkerlaunch-master")
                 print("log: Downloading...")
                 subprocess.run(f"wget -P {download_dir} https://github.com/sonic2kk/steamtinkerlaunch/archive/refs/heads/master.zip", shell=True, check=True)
-                if download_dir == self.default_dir:
-                    print("log: Extracting...")
-                    zip = zipfile.ZipFile(download_path, "r")
-                    zip.extractall(path=download_dir)
-                    zip.close()
-                    subprocess.run(f"chmod +x {download_dir}steamtinkerlaunch-master/steamtinkerlaunch && {download_dir}steamtinkerlaunch-master/steamtinkerlaunch compat add", shell=True)
-                    subprocess.run(f"rm {download_path} && rm -rf {download_dir}/steamtinkerlaunch-master", shell=True)
+                print("log: Extracting...")
+                zip = zipfile.ZipFile(download_path_zip_file, "r")
+                zip.extractall(path=download_dir)
+                zip.close()
+                print("log: adding permissions to execute file")
+                subprocess.run(f"chmod +x {download_dir}steamtinkerlaunch-master/steamtinkerlaunch && {download_dir}steamtinkerlaunch-master/steamtinkerlaunch compat add", shell=True)
+                print("log: Cleaning up!")
+                subprocess.run(f"rm {download_path_zip_file} && rm -rf {download_path}", shell=True)
                 time.sleep(2)
-                # SuccessLabel = ttk.Label(root, text="Installed Successfully!", style="GreenFartation.TLabel")
                 print("log: Completed!")
                 time.sleep(4)
             except subprocess.CalledProcessError:
@@ -420,12 +443,13 @@ class MainWindow(QMainWindow):
                 subprocess.run(f"gh run download -R Frogging-Family/wine-tkg-git {self.selected_version_proton} -D {self.download_dir_selection}", shell=True)
                 download_dir = self.download_dir_selection
                 download_path = os.path.join(download_dir, "proton-tkg-build/*.tar")
+                download_path_folder = os.path.join(download_dir, "proton-tkg-build")
                 files = glob.glob(download_path)
                 print("log: Extracting...")
                 tar = tarfile.open(files[0], "r")
                 tar.extractall(path=download_dir)
                 tar.close()
-                subprocess.run(f"rm -rf {download_dir}/proton-tkg-build", shell=True)
+                subprocess.run(f"rm -rf {download_path_folder}", shell=True)
                 time.sleep(2)
                 print("log: Completed!")
                 time.sleep(4)
