@@ -1,3 +1,5 @@
+## please start using the [PyQT6 Branch](https://github.com/LTR77/Protoko-Proton-Downloader/tree/qt-beta) instead
+
 # Protoko Proton Downloader
 This is my first GUI Application in Python using TKinter (Soon [PYQT6](https://github.com/LTR77/Protoko-Proton-Downloader/tree/qt-beta) (: ).  
 
